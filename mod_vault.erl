@@ -1,4 +1,20 @@
+%% @author Marc Worrell <marc@worrell.nl>
+%% @copyright 2012 Marc Worrell
 %% @doc Provides encryption of values.
+
+%% Copyright 2012 Marc Worrell
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%% 
+%%     http://www.apache.org/licenses/LICENSE-2.0
+%% 
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
 
 -module(mod_vault).
 
@@ -10,6 +26,7 @@
 	observe_vault_decode/2,
 	observe_vault_encode/2,
 	observe_vault_is_unlocked/2,
+	observe_admin_menu/3,
 	event/2,
 	manage_schema/2,
 
@@ -26,6 +43,7 @@
 
 
 -include("zotonic.hrl").
+-include_lib("modules/mod_admin/include/admin_menu.hrl").
 -include_lib("public_key/include/public_key.hrl").
 
 
@@ -53,6 +71,16 @@ observe_vault_is_unlocked({vault_is_unlocked, Name}, Context) ->
 		_ -> false
 	end.
 
+observe_admin_menu(admin_menu, Acc, Context) ->
+	[
+	    #menu_item{
+	    		id=vault,
+                parent=admin_auth,
+                label=?__("Vault secure keys", Context),
+                url={admin_vault},
+                visiblecheck={acl, use, ?MODULE}}
+		|Acc
+	].
 
 
 event(#submit{message={vault_unlock, Args}, form=FormId}, Context) ->
@@ -74,13 +102,90 @@ event(#postback{message={vault_lock, Args}}, Context) ->
 	lock_key_session(Name, Context),
 	z_render:wire({reload, []}, Context);
 
+event(#postback{message={vault_delete, Args}}, Context) ->
+	case get_key_session(vault, Context) of
+		{ok, _} -> 
+			Id = proplists:get_value(id, Args),
+			m_vault:delete_private_key(Id, Context),
+			z_render:wire({remove, [{target, "vault-"++integer_to_list(Id)}]}, Context);
+		_ ->
+			Context
+	end;
+
+event(#submit{message=vault_new}, Context) ->
+	case get_key_session(vault, Context) of
+		{ok, _} -> 
+			Name = z_context:get_q_validated("name", Context),
+			Password = z_context:get_q_validated("password", Context),
+			case generate_key(Name, z_acl:user(Context), Password, Context) of
+				ok -> 
+					z_render:wire({reload, []}, Context);
+				{error, key_exists} ->
+					z_render:growl(?__("Sorry, that key already exists.", Context), Context);
+				_ ->
+					z_render:growl(?__("Sorry, could not generate a new key.", Context), Context)
+			end;
+		_ ->
+			Context
+	end;
+
+event(#submit{message={vault_password, Args}}, Context) ->
+	case get_key_session(vault, Context) of
+		{ok, _} -> 
+			Name = proplists:get_value(name, Args),
+			UserId = proplists:get_value(user_id, Args),
+			Old = z_context:get_q_validated("old", Context),
+			New = z_context:get_q_validated("new", Context),
+			case m_vault:change_private_key_password(Name, UserId, Old, New, Context) of
+				ok -> 
+					z_render:dialog_close(z_render:growl(?__("Changed private key password.", Context), Context));
+				_ ->
+					z_render:growl(?__("Could not change password, is the old password correct?", Context), Context)
+			end;
+		_ ->
+			Context
+	end;
+
+event(#submit{message={vault_copy, Args}}, Context) ->
+	case get_key_session(vault, Context) of
+		{ok, _} -> 
+			Username = z_context:get_q_validated("username", Context),
+			case m_identity:lookup_by_username(Username, Context) of
+				L when is_list(L) ->
+					Name = proplists:get_value(name, Args),
+					UserId = proplists:get_value(user_id, Args),
+					ToUser = proplists:get_value(rsc_id, L), 
+					Old = z_context:get_q_validated("old", Context),
+					New = z_context:get_q_validated("new", Context),
+					case m_vault:copy_private_key(Name, UserId, ToUser, Old, New, Context) of
+						ok -> 
+							z_render:wire([
+									{dialog_close, []},
+									{reload, []}
+								],
+								Context);
+						_ ->
+							z_render:growl(?__("Could not unlock the password, is the old password correct?", Context), Context)
+					end;
+				undefined ->
+					z_render:growl(?__("Unknown username. Check the username and try again.", Context), Context)
+			end;
+		_ ->
+			Context
+	end;
+
 event(Event, Context) ->
 	?DEBUG({unknown, Event}),
 	Context.
 
 
 manage_schema(install, Context) ->
-	m_vault:init(Context).
+	ok = m_vault:init(Context),
+	case m_vault:is_key(vault, Context) of
+		false -> generate_key(vault, 1, m_config:get_value(site, admin_password, Context), Context);
+		true ->	ok
+	end.
+
 
 %% @doc Generate a named public/private key for this system.
 -spec generate_key(Name::string()|binary()|atom(), UserId::integer(), Password::string()|binary(), #context{}) 

@@ -1,6 +1,29 @@
+%% @author Marc Worrell <marc@worrell.nl>
+%% @copyright 2012 Marc Worrell
+%% @doc Provides model for mod_vault
+
+%% Copyright 2012 Marc Worrell
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%% 
+%%     http://www.apache.org/licenses/LICENSE-2.0
+%% 
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+
 -module(m_vault).
 
 -export([
+	m_find_value/3,
+	m_value/2,
+	m_to_list/2,
+
+
 	is_key/2,
 	is_key_user/3,
 	save_key/6,
@@ -8,6 +31,7 @@
 	get_private_key/4,
 	delete_key/2,
 	delete_private_key/3,
+	delete_private_key/2,
 	change_private_key_password/5,
 	copy_private_key/6,
 	init/1
@@ -15,6 +39,29 @@
 
 -include("zotonic.hrl").
 -include_lib("public_key/include/public_key.hrl").
+
+
+m_find_value(list_all_private, #m{value=undefined}, Context) ->
+	list_all_private(Context);
+m_find_value(is_unlocked, #m{value=undefined} = M, _Context) ->
+	M#m{value=is_unlocked};
+m_find_value(Name, #m{value=is_unlocked}, Context) ->
+	case mod_vault:get_key_session(Name, Context) of
+		{ok, _} -> true;
+		_ -> false
+	end.
+
+m_value(#m{}, _Context) ->
+	undefined.
+
+m_to_list(#m{}, _Context) ->
+	[].
+
+
+%% @doc List all private keys of all users
+list_all_private(Context) ->
+	z_db:assoc("select id, name, user_id from vault where is_private order by name,id", Context).
+
 
 %% @doc Test if a key is known. The name is case sensitive.
 -spec is_key( Name::string()|binary()|atom(), #context{} ) -> boolean().
@@ -90,13 +137,28 @@ delete_key(Name, Context) ->
 	ok.
 
 
--spec delete_private_key(Name::string()|binary()|atom(), UserId::integer(), #context{}) -> ok.
+-spec delete_private_key(Name::string()|binary()|atom()|integer(), UserId::integer(), #context{}) -> ok.
 delete_private_key(Name, UserId, Context) ->
 	z_db:q("delete from vault where name = $1 and user_id = $2 and is_private",
 		   [Name, UserId],
 		   Context),
+	prune_public_key(Name, Context),
 	ok.
 
+-spec delete_private_key(Id::integer(), #context{}) -> ok.
+delete_private_key(Id, Context) when is_integer(Id) ->
+	Name = z_db:q1("select name from vault where id = $1 and is_private", [Id], Context),
+	z_db:q("delete from vault where id = $1 and is_private",
+		   [Id],
+		   Context),
+	prune_public_key(Name, Context),
+	ok.
+
+prune_public_key(Name, Context) ->
+	case z_db:q1("select count(*) from vault where name = $1 and is_private", [Name], Context) of
+		0 -> delete_key(Name, Context);
+		_N -> ok
+	end.
 
 %% @doc Return the named private key, encode with password
 -spec change_private_key_password(Name::string()|binary()|atom(), UserId::integer(),

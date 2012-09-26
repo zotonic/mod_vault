@@ -1,0 +1,3 @@
+[
+	{admin_vault, ["admin", "vault"], controller_admin, [{template, "admin_vault.tpl"}, {acl_module, mod_vault}]}
+].
