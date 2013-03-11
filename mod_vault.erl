@@ -224,7 +224,7 @@ generate_key_pair() ->
 	case binary:split(B, <<"-----BEGIN">>) of
 		[_,PrivK] ->
 			PrivateKey = <<"-----BEGIN", PrivK/binary>>,
-			TmpFile = z_utils:tempfile(),
+			TmpFile = z_tempfile:tempfile(),
 			case file:write_file(TmpFile, PrivateKey) of
 				ok ->
 					PubCmd = iolist_to_binary([OpenSSL, " rsa -in ", TmpFile ," -pubout"]),
