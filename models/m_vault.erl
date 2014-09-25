@@ -84,11 +84,11 @@ save_key(RSAPrivKey, RSAPubKey, Name, UserId, Password, Context) ->
 			F = fun(Ctx) ->
 					1 = z_db:q("insert into vault (is_private, name, user_id, key)
 								 values (false, $1, null, $2)",
-								[Name, RSAPubKey],
+								[Name, ?DB_PROPS(RSAPubKey)],
 								Ctx),
 					1 = z_db:q("insert into vault (is_private, name, user_id, key)
 								 values (true, $1, $2, $3)",
-								[Name, UserId, PrivEnc],
+								[Name, UserId, ?DB_PROPS(PrivEnc)],
 								Ctx),
 					ok
 				end,
