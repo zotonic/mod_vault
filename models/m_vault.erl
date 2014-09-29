@@ -169,7 +169,7 @@ change_private_key_password(Name, UserId, PasswordOld, PasswordNew, Context) ->
 		{ok, RSAPrivKey} ->
 			Encrypted = encrypt(PasswordNew, RSAPrivKey),
 			1 = z_db:q("update vault set key = $1 where name = $2 and user_id = $3 and is_private",
-				       [Encrypted, Name, UserId],
+				       [?DB_PROPS(Encrypted), Name, UserId],
 				       Context),
 			ok;
 		Error ->
@@ -190,12 +190,12 @@ copy_private_key(Name, UserIdFrom, UserIdTo, PasswordFrom, PasswordTo, Context) 
 			case is_key_user(Name, UserIdTo, Context) of
 				true ->
 					1 = z_db:q("update vault set key = $1 where name = $2 and user_id = $3 and is_private",
-						       [Encrypted, Name, UserIdTo],
+						       [?DB_PROPS(Encrypted), Name, UserIdTo],
 						       Context);
 				false ->
 					1 = z_db:q("insert into vault (is_private, name, user_id, key)
 								 values (true, $1, $2, $3)",
-								[Name, UserIdTo, Encrypted],
+								[Name, UserIdTo, ?DB_PROPS(Encrypted)],
 								Context)
 			end,
 			ok;
