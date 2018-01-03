@@ -300,17 +300,17 @@ decode_term_session(#vault{name=Name} = V, Context) ->
 %% @doc Encode a term using the named public key
 -spec encode_term(Name::string()|binary()|atom(), Term::term(), #context{}) -> {ok, term()} | {error, not_found}.
 encode_term(Name, Term, Context) ->
-	NameBin = z_convert:to_binary(Name), 
+	NameBin = z_convert:to_binary(Name),
 	case m_vault:get_public_key(NameBin, Context) of
 		{ok, #'RSAPublicKey'{} = PublicKey} ->
-			Key = crypto:rand_bytes(16),
-			IVec = crypto:rand_bytes(8), 
-			Data = term_to_binary(Term), 
-			Encoded = crypto:blowfish_cfb64_encrypt(Key, IVec, Data),
+			Key = crypto:strong_rand_bytes(16),
+			IVec = crypto:strong_rand_bytes(8),
+			Data = term_to_binary(Term),
+			Encoded = crypto:block_encrypt(blowfish_cfb64, Key, IVec, Data),
 			Header = term_to_binary({blowfish_cfb64_encrypt, IVec, Key}),
 			RsaHeader = public_key:encrypt_public(Header, PublicKey),
 			{ok, #vault{name=NameBin, header=RsaHeader, data=Encoded, timestamp=os:timestamp()}};
-		{error, _} = Err -> 
+		{error, _} = Err ->
 			Err
 	end.
 
@@ -328,7 +328,7 @@ decode_term(#vault{header=Header, data=Data}, PrivateKey) ->
 		Hdr when is_binary(Hdr) ->
 			case catch binary_to_term(Hdr) of
 				{blowfish_cfb64_encrypt, IVec, Key} ->
-					Decoded = crypto:blowfish_cfb64_decrypt(Key, IVec, Data),
+					Decoded = crypto:block_decrypt(blowfish_cfb64, Key, IVec, Data),
 					{ok, binary_to_term(Decoded)};
 				_ ->
 					{error, decode_header}

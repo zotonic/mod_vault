@@ -202,19 +202,19 @@ copy_private_key(Name, UserIdFrom, UserIdTo, PasswordFrom, PasswordTo, Context) 
 		Error ->
 			Error
 	end.
-	
+
 
 
 encrypt(Password, Term) ->
 	PW = z_convert:to_binary(Password),
-	IVec = crypto:rand_bytes(8),
-	Bin = erlang:term_to_binary(Term), 
-	Enc = crypto:blowfish_cfb64_encrypt(PW, IVec, Bin),
+	IVec = crypto:strong_rand_bytes(8),
+	Bin = erlang:term_to_binary(Term),
+	Enc = crypto:block_encrypt(blowfish_cfb64, PW, IVec, Bin),
 	{blowfish_cfb64_encrypt, IVec, Enc}.
 
 decrypt(Password, {blowfish_cfb64_encrypt, IVec, Enc}) ->
 	PW = z_convert:to_binary(Password),
-	crypto:blowfish_cfb64_decrypt(PW, IVec, Enc).
+	crypto:block_decrypt(blowfish_cfb64, PW, IVec, Enc).
 
 
 %% @doc Install the tables needed for the vault key administration.
