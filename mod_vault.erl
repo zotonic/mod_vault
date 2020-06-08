@@ -87,12 +87,11 @@ event(#submit{message={vault_unlock, Args}, form=FormId}, Context) ->
 	Password = z_context:get_q("password", Context),
 	Name = proplists:get_value(name, Args),
 	case unlock_key_session(Name, Password, Context) of
-		ok -> 
+		ok ->
 			z_render:wire({reload, []}, Context);
 		_ ->
-			z_render:wire({add_class, [
-								{selector, "#"++FormId++" .control-group"},
-								{class, "error"}
+			z_render:wire({show, [
+								{target, " #"++FormId++" .error"}
 							]},
 							Context)
 	end;

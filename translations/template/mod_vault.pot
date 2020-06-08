@@ -1,0 +1,191 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# NB: Consider using poEdit <http://poedit.sourceforge.net>
+#
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:52 
+msgid ""
+"Actions"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:45 ./user/modules/mod_vault/templates/admin_vault.tpl:45 
+msgid ""
+"Add new key"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/_dialog_vault_copy.tpl:23 ./user/modules/mod_vault/templates/_dialog_vault_password.tpl:19 ./user/modules/mod_vault/templates/_dialog_vault_new.tpl:19 
+msgid ""
+"Cancel"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/_dialog_vault_password.tpl:20 ./user/modules/mod_vault/templates/admin_vault.tpl:82 ./user/modules/mod_vault/templates/admin_vault.tpl:83 ./user/modules/mod_vault/templates/admin_vault.tpl:87 
+msgid ""
+"Change Password"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/_dialog_vault_password.tpl:8 
+msgid ""
+"Change the password of the key:"
+msgstr ""
+
+#: ./user/modules/mod_vault/mod_vault.erl:141 
+msgid ""
+"Changed private key password."
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:64 
+msgid ""
+"Copy"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/_dialog_vault_copy.tpl:24 
+msgid ""
+"Copy Private Key"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:65 
+msgid ""
+"Copy private key"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/_dialog_vault_copy.tpl:8 
+msgid ""
+"Copy the key:"
+msgstr ""
+
+#: ./user/modules/mod_vault/mod_vault.erl:143 
+msgid ""
+"Could not change password, is the old password correct?"
+msgstr ""
+
+#: ./user/modules/mod_vault/mod_vault.erl:168 
+msgid ""
+"Could not unlock the password, is the old password correct?"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/_dialog_vault_new.tpl:20 
+msgid ""
+"Create Key"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/_dialog_vault_new.tpl:8 
+msgid ""
+"Create a new public/private key pair."
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:70 ./user/modules/mod_vault/templates/admin_vault.tpl:73 ./user/modules/mod_vault/templates/admin_vault.tpl:78 
+msgid ""
+"Delete"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:72 
+msgid ""
+"Deleting a private key removes access to all encrypted data.<br/>Are you "
+"sure?"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/_dialog_vault_new.tpl:10 
+msgid ""
+"Key name"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:16 
+msgid ""
+"Lock Vault"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:50 
+msgid ""
+"Name"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/_dialog_vault_copy.tpl:18 ./user/modules/mod_vault/templates/_dialog_vault_password.tpl:14 
+msgid ""
+"New password"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/_dialog_vault_password.tpl:10 
+msgid ""
+"Old password"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:51 
+msgid ""
+"Owner"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/_dialog_vault_copy.tpl:10 
+msgid ""
+"Password"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/_dialog_vault_new.tpl:14 
+msgid ""
+"Private key password"
+msgstr ""
+
+#: ./user/modules/mod_vault/mod_vault.erl:126 
+msgid ""
+"Sorry, could not generate a new key."
+msgstr ""
+
+#: ./user/modules/mod_vault/mod_vault.erl:124 
+msgid ""
+"Sorry, that key already exists."
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:23 
+msgid ""
+"This is an overview of all the vault keys."
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:30 
+msgid ""
+"This page is locked. You need to enter your vault password to view the "
+"passwords."
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/_dialog_vault_copy.tpl:14 
+msgid ""
+"To user"
+msgstr ""
+
+#: ./user/modules/mod_vault/mod_vault.erl:171 
+msgid ""
+"Unknown username. Check the username and try again."
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:37 
+msgid ""
+"Unlock"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:3 
+msgid ""
+"Vault Keys"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:22 ./user/modules/mod_vault/mod_vault.erl:79 
+msgid ""
+"Vault secure keys"
+msgstr ""
+
+#: ./user/modules/mod_vault/templates/admin_vault.tpl:38 
+msgid ""
+"Wrong password. Try again."
+msgstr ""

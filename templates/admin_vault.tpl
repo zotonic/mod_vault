@@ -25,19 +25,22 @@
 
 {% if not is_unlocked %}
 
-	<p class="alert">
-		<i class="icon-lock"></i>
+	<p class="alert alert-danger">
+		<i class="glyphicon glyphicon-lock"></i>
 		{_ This page is locked. You need to enter your vault password to view the passwords. _}
 	</p>
 
 	{% wire id="donation-unlock" type="submit" postback={vault_unlock name=`vault`} delegate=`mod_vault` %}
 	<form id="donation-unlock" class="form-inline" method="post" action="postback">
-	<div class="control-group">
-		<input type="password" placeholder="password" name="password" value="" />
-		<input class="btn" type="submit" value="{_ Unlock _}" />
-		<span class="help-inline error">{_ Wrong password. Try again. _}</span>
-	</div>
+		<div class="form-group">
+			<input type="password" placeholder="password" name="password" class="form-control" value="">
+		</div>
+		<div class="form-group">
+			<input class="btn" type="submit" value="{_ Unlock _}" />
+			<span class="help-inline text-danger error" style="display: none">&nbsp; {_ Wrong password. Try again. _}</span>
+		</div>
 	</form>
+
 	<p><small><a href="{% url admin_vault %}">Manage keys &raquo;</a></small></p>
 
 {% else %}
