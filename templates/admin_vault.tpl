@@ -11,7 +11,7 @@
 	{% if is_unlocked %}
 		{% wire id=#lock postback={vault_lock name=`vault`} delegate=`mod_vault` %}
 	    <p class="pull-right">
-	    	<a class="btn btn-small" id="{{ #lock }}" href="#lock">
+	    	<a class="btn btn-default btn-small" id="{{ #lock }}" href="#lock">
 	    		<i class="icon-lock"></i>
 	    		{_ Lock Vault _}
 		    </a><br/>
@@ -36,7 +36,7 @@
 			<input type="password" placeholder="password" name="password" class="form-control" value="">
 		</div>
 		<div class="form-group">
-			<input class="btn" type="submit" value="{_ Unlock _}" />
+			<input class="btn btn-primary" type="submit" value="{_ Unlock _}" />
 			<span class="help-inline text-danger error" style="display: none">&nbsp; {_ Wrong password. Try again. _}</span>
 		</div>
 	</form>
